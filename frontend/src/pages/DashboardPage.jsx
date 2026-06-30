@@ -8,6 +8,7 @@ const DashboardPage = () => {
   const [opportunities, setOpportunities] = useState([]);
 
   useEffect(() => {
+    
     const fetchMyOpportunities = async () => {
       try {
         const response = await axios.get("/opportunities/my-opportunities", {
@@ -24,6 +25,30 @@ const DashboardPage = () => {
 
     fetchMyOpportunities();
   }, []);
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this opportunity?",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`/opportunities/${id}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      setOpportunities(
+        opportunities.filter((opportunity) => opportunity.id !== id),
+      );
+    } catch (error) {
+      console.error(error);
+
+      alert(error.response?.data?.message || "Failed to delete opportunity");
+    }
+  };
 
   return (
     <>
@@ -148,6 +173,7 @@ const DashboardPage = () => {
                 </button>
 
                 <button
+                  onClick={() => handleDelete(opportunity.id)}
                   style={{
                     padding: "10px 18px",
                     borderRadius: "8px",
