@@ -1,6 +1,39 @@
 import Navbar from "../components/Navbar";
 
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import axios from "../api/axios";
+
 const OpportunityDetailsPage = () => {
+  const { id } = useParams();
+
+  const [opportunity, setOpportunity] = useState(null);
+
+  useEffect(() => {
+    const fetchOpportunity = async () => {
+      try {
+        const response = await axios.get(`/opportunities/${id}`);
+
+        console.log(response.data);
+
+        setOpportunity(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchOpportunity();
+  }, [id]);
+
+  if (!opportunity) {
+    return (
+      <>
+        <Navbar />
+        <h1 style={{ textAlign: "center", marginTop: "100px" }}>Loading...</h1>
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
@@ -52,7 +85,7 @@ const OpportunityDetailsPage = () => {
                 fontSize: "12px",
               }}
             >
-              Hackathon
+              {opportunity.category}
             </span>
 
             <h1
@@ -61,7 +94,7 @@ const OpportunityDetailsPage = () => {
                 marginTop: "20px",
               }}
             >
-              Smart India Hackathon 2025
+              {opportunity.title}
             </h1>
 
             <p
@@ -69,7 +102,7 @@ const OpportunityDetailsPage = () => {
                 color: "#6B7280",
               }}
             >
-              Posted by NIT Raipur Coding Club
+              Posted by {opportunity.organizer?.name}
             </p>
           </div>
 
@@ -122,17 +155,17 @@ const OpportunityDetailsPage = () => {
         >
           <div>
             <h4>Deadline</h4>
-            <p>July 15, 2025</p>
+            <p>{new Date(opportunity.deadline).toLocaleDateString()}</p>
           </div>
 
           <div>
             <h4>Category</h4>
-            <p>Hackathon</p>
+            <p>{opportunity.category}</p>
           </div>
 
           <div>
             <h4>Organizer</h4>
-            <p>Coding Club, NITRR</p>
+            <p>{opportunity.organizer?.name}</p>
           </div>
         </div>
 
@@ -157,30 +190,7 @@ const OpportunityDetailsPage = () => {
               marginTop: "20px",
             }}
           >
-            Smart India Hackathon is India's largest open innovation model where
-            students work on real-world problem statements.
-          </p>
-
-          <p
-            style={{
-              color: "#6B7280",
-              lineHeight: "1.8",
-              marginTop: "20px",
-            }}
-          >
-            Teams of six students will work on problems provided by ministries
-            and PSUs. Selected teams will represent their institutions in
-            national rounds.
-          </p>
-
-          <p
-            style={{
-              color: "#6B7280",
-              lineHeight: "1.8",
-              marginTop: "20px",
-            }}
-          >
-            Open to all students. Register before the deadline.
+            {opportunity.description}
           </p>
         </div>
       </div>
