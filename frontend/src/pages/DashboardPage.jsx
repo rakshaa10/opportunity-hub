@@ -1,27 +1,29 @@
 import Navbar from "../components/Navbar";
 import { Link } from "react-router-dom";
 
+import { useEffect, useState } from "react";
+import axios from "../api/axios";
+
 const DashboardPage = () => {
-  const opportunities = [
-    {
-      id: 1,
-      title: "Web Dev Workshop — Technocracy",
-      category: "Workshop",
-      deadline: "Closes Jul 20",
-    },
-    {
-      id: 2,
-      title: "NSS Volunteer Drive 2025",
-      category: "Club Recruitment",
-      deadline: "Closes Jul 18",
-    },
-    {
-      id: 3,
-      title: "Think India Essay Competition",
-      category: "Competition",
-      deadline: "Closed",
-    },
-  ];
+  const [opportunities, setOpportunities] = useState([]);
+
+  useEffect(() => {
+    const fetchMyOpportunities = async () => {
+      try {
+        const response = await axios.get("/opportunities/my-opportunities", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        setOpportunities(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    fetchMyOpportunities();
+  }, []);
 
   return (
     <>
@@ -121,7 +123,8 @@ const DashboardPage = () => {
                     color: "#9CA3AF",
                   }}
                 >
-                  {opportunity.category} • {opportunity.deadline}
+                  {opportunity.category} •{" "}
+                  {new Date(opportunity.deadline).toLocaleDateString()}
                 </p>
               </div>
 

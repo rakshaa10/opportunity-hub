@@ -1,7 +1,44 @@
 import Navbar from "../components/Navbar";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+
+import axios from "../api/axios";
 
 const CreateOpportunityPage = () => {
+  const navigate = useNavigate();
+
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("HACKATHON");
+  const [deadline, setDeadline] = useState("");
+  const [description, setDescription] = useState("");
+  const [registrationLink, setRegistrationLink] = useState("");
+  const handleSubmit = async () => {
+    try {
+      await axios.post(
+        "/opportunities",
+        {
+          title,
+          category,
+          deadline,
+          description,
+          registrationLink,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+
+      alert("Opportunity created successfully");
+
+      navigate("/dashboard");
+    } catch (error) {
+      console.error(error);
+
+      alert(error.response?.data?.message || "Failed to create opportunity");
+    }
+  };
   return (
     <>
       <Navbar />
@@ -56,6 +93,8 @@ const CreateOpportunityPage = () => {
 
           <input
             type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="e.g. Web Dev Workshop — Technocracy"
             style={{
               width: "100%",
@@ -83,6 +122,8 @@ const CreateOpportunityPage = () => {
             </label>
 
             <select
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -92,12 +133,12 @@ const CreateOpportunityPage = () => {
                 color: "white",
               }}
             >
-              <option>Hackathon</option>
-              <option>Internship</option>
-              <option>Workshop</option>
-              <option>Scholarship</option>
-              <option>Competition</option>
-              <option>Club Recruitment</option>
+              <option value="HACKATHON">Hackathon</option>
+              <option value="INTERNSHIP">Internship</option>
+              <option value="WORKSHOP">Workshop</option>
+              <option value="SCHOLARSHIP">Scholarship</option>
+              <option value="COMPETITION">Competition</option>
+              <option value="CLUB_RECRUITMENT">Club Recruitment</option>
             </select>
           </div>
 
@@ -108,6 +149,8 @@ const CreateOpportunityPage = () => {
 
             <input
               type="date"
+              value={deadline}
+              onChange={(e) => setDeadline(e.target.value)}
               style={{
                 width: "100%",
                 padding: "12px",
@@ -127,6 +170,8 @@ const CreateOpportunityPage = () => {
           </label>
 
           <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             placeholder="Describe the opportunity — what it is, who can apply, what to expect..."
             rows={6}
             style={{
@@ -149,6 +194,8 @@ const CreateOpportunityPage = () => {
 
           <input
             type="text"
+            value={registrationLink}
+            onChange={(e) => setRegistrationLink(e.target.value)}
             placeholder="https://unstop.com/your-event"
             style={{
               width: "100%",
@@ -206,6 +253,7 @@ const CreateOpportunityPage = () => {
           </Link>
 
           <button
+            onClick={handleSubmit}
             style={{
               padding: "12px 20px",
               borderRadius: "10px",
