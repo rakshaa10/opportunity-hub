@@ -8,6 +8,10 @@ const OrganizerRoute = ({ children }) => {
     return <Navigate to="/login" />;
   }
 
+  if (!user) {
+    return <div>Loading...</div>;
+  }
+
   if (user.role !== "ORGANIZER") {
     return <Navigate to="/" />;
   }
