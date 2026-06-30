@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
+import Navbar from "./components/Navbar";
+
 import HomePage from "./pages/HomePage";
 import OpportunityDetailsPage from "./pages/OpportunityDetailsPage";
 import LoginPage from "./pages/LoginPage";
@@ -11,6 +13,8 @@ import CreateOpportunityPage from "./pages/CreateOpportunityPage";
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
+
       <Routes>
         <Route path="/" element={<HomePage />} />
 
